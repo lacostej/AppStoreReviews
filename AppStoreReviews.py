@@ -129,7 +129,7 @@ def _getReviewsForPage(appStoreId, appId, pageNo):
         if review_node is None:
             review["review"] = None
         else:
-            review["review"] = review_node.text
+            review["review"] = review_node.text.encode('utf-8')
 
         version_node = node.find("{http://www.apple.com/itms/}HBoxView/{http://www.apple.com/itms/}TextView/{http://www.apple.com/itms/}SetFontStyle/{http://www.apple.com/itms/}GotoURL")
         if version_node is None:
@@ -141,7 +141,7 @@ def _getReviewsForPage(appStoreId, appId, pageNo):
         if user_node is None:
             review["user"] = None
         else:
-            review["user"] = user_node.text.strip()
+            review["user"] = user_node.text.strip().encode('utf-8')
 
         rank_node = node.find("{http://www.apple.com/itms/}HBoxView/{http://www.apple.com/itms/}HBoxView/{http://www.apple.com/itms/}HBoxView")
         try:
@@ -155,7 +155,7 @@ def _getReviewsForPage(appStoreId, appId, pageNo):
         if topic_node is None:
             review["topic"] = None
         else:
-            review["topic"] = topic_node.text
+            review["topic"] = topic_node.text.encode('utf-8')
 
         reviews.append(review)
     return reviews
@@ -202,7 +202,10 @@ if __name__ == '__main__':
                 (rc,rs) = _print_reviews(reviews, c)
                 rankCount += rc
                 rankSum += rs
-            print "\nTotal number of reviews: %d, avg rank: %.2f" % (rankCount, 1.0 * rankSum/rankCount)
+            avgRank = 0.0
+            if (rankCount > 0):
+                avgRank = 1.0 * rankSum/rankCount
+            print "\nTotal number of reviews: %d, avg rank: %.2f" % (rankCount, avgRank)
         else:
             try:
                 reviews = getReviews(appStores[country], args.id)
